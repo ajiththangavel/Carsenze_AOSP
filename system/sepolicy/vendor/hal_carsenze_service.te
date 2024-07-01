@@ -1,0 +1,16 @@
+type hal_carsenze_service, domain;
+hal_server_domain(hal_carsenze_service, hal_carsenze)
+type hal_carsenze_service_exec, exec_type, vendor_file_type, vendor_file_type, file_type;
+
+# hal_carsenze_service servicemanager and binder access
+allow shell hal_carsenze_service:binder { call transfer };
+allow servicemanager hal_carsenze_service:dir search;
+allow servicemanager hal_carsenze_service:file { open read };
+allow servicemanager hal_carsenze_service:process getattr;
+allow hal_carsenze_service servicemanager:binder { call transfer};
+allow hal_carsenze_service system_server:binder call;
+allow hal_carsenze_service default_android_service:service_manager add;
+allow untrusted_app default_android_service:service_manager find;
+allow untrusted_app hal_carsenze_service:binder call;
+
+init_daemon_domain(hal_carsenze_service)
