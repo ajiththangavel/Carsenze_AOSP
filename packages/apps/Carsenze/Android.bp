@@ -1,0 +1,10 @@
+android_app {
+    name: "Carsenze",
+    platform_apis: true,
+    srcs: [
+        "src/**/*.java"
+    ],
+    static_libs: [
+        "android.hardware.carsenze-V1-java"
+    ]
+}
