@@ -1,9 +1,12 @@
 
-#define LOG_TAG "Carsenze"
+#define LOG_TAG "Carsenze_HAL_service"
 
 #include <utils/Log.h>
 #include <iostream>
 #include <fstream>
+#include <sys/sysinfo.h>
+#include <sstream>
+#include <string>
 #include "Carsenze.h"
 
 namespace aidl {
@@ -13,7 +16,24 @@ namespace aidl {
                 //String getMemoryStats();
                 ndk::ScopedAStatus Carsenze::getMemoryStats(std::string* _aidl_return) {
                     ALOGD("***-Memory Info is REQUESTED-***");
-                    *_aidl_return =  "Memory = 1024 MB";
+                    struct sysinfo memInfo;
+                    sysinfo(&memInfo);
+                     // Calculate total physical memory in bytes
+                     long long int totalPhysMem = memInfo.totalram;
+                     totalPhysMem *= memInfo.mem_unit;
+
+                    // Calculate free physical memory in bytes
+                    long long int freePhysMem = memInfo.freeram;
+                    freePhysMem *= memInfo.mem_unit;
+                    // Calculate used physical memory in bytes
+                    long long int usedPhysMem = totalPhysMem - freePhysMem;
+
+                    // Convert memory values to megabytes and format the output string
+                    std::ostringstream oss;
+                    oss << "Total RAM: " << (totalPhysMem / (1024 * 1024)) << " MB\n"
+                    << "Free RAM: " << (freePhysMem / (1024 * 1024)) << " MB\n"
+                    << "Used RAM: " << (usedPhysMem / (1024 * 1024)) << " MB";
+                    *_aidl_return = oss.str();
                     return ndk::ScopedAStatus::ok();
                 }
                 //String getCpuStats();
@@ -32,3 +52,4 @@ namespace aidl {
         }  // namespace hardwares
     }  // namespace android
 }  // namespace aidl
+
