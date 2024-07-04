@@ -7,6 +7,7 @@
 #include <sys/sysinfo.h>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "Carsenze.h"
 
 namespace aidl {
@@ -39,14 +40,66 @@ namespace aidl {
                 //String getCpuStats();
                 ndk::ScopedAStatus Carsenze::getCpuStats(std::string* _aidl_return) {
                     ALOGD("***-CPU Info is REQUESTED-***");
-                    *_aidl_return =  "CPU = 74.32 %";
+
+                    double usage = calculateCpuUsage();
+                    *_aidl_return = "CPU Usage = " + std::to_string(usage) + " %";
                     return ndk::ScopedAStatus::ok();
                 }
                 //String getNetworkStats();
                 ndk::ScopedAStatus Carsenze::getNetworkStats(std::string* _aidl_return) {
                     ALOGD("***-Network Info is REQUESTED-***");
-                    *_aidl_return =  "Network = 10 Mb/s";
+                    int pingResult = system("ping -c 1 google.com > /dev/null 2>&1");
+                    if(pingResult == 0){
+                        *_aidl_return =  "Connected";
+                    }
+                    else{
+                         *_aidl_return =  "Disconnected";
+                    }
+                   
                     return ndk::ScopedAStatus::ok();
+                }
+                double Carsenze::calculateCpuUsage() {
+                    std::ifstream file("/proc/stat");
+                    
+                     if(!file.is_open()) {
+                    ALOGE("**-Failed to open /proc/stat-**");
+                     }
+
+                    std::string line;
+                    std::getline(file, line);
+
+                    std::istringstream ss(line);
+                    std::string cpu;
+                    ss >> cpu;
+
+                    std::vector<long long> times;
+                    long long time;
+                    while (ss >> time) {
+                        times.push_back(time);
+                    }
+
+                    if (times.size() < 4) {
+                        return 0.0;
+                    }
+
+                    long long total = 0;
+                    for (long long t : times) {
+                        total += t;
+                    }
+
+                    long long idle = times[3];
+
+                    long long totalDiff = total - prevTotalTime;
+                    long long idleDiff = idle - prevIdleTime;
+
+                    prevTotalTime = total;
+                    prevIdleTime = idle;
+
+                    if (totalDiff == 0) {
+                        return 0.0;
+                    }
+
+                    return (double)(totalDiff - idleDiff) / totalDiff * 100.0;
                 }
             }  // namespace carsenze
         }  // namespace hardwares
