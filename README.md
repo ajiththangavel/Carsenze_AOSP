@@ -46,3 +46,10 @@ we can know the missing sepolicies by running this commands.
 1)adb pull /sys/fs/selinux/policy
 2)adb logcat -b events -d | audit2allow -p policy
 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-->added the following policies into system/sepolicy/vendor/hal_carsenze_service.te to allow the service to open the /sys/class/net files
+
+allow hal_carsenze_service sysfs_net:dir search;
+allow hal_carsenze_service sysfs_net:file read;
+allow hal_carsenze_service sysfs_net:file open;
