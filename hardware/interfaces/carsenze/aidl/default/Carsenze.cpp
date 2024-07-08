@@ -48,14 +48,27 @@ namespace aidl {
                 //String getNetworkStats();
                 ndk::ScopedAStatus Carsenze::getNetworkStats(std::string* _aidl_return) {
                     ALOGD("***-Network Info is REQUESTED-***");
-                    int pingResult = system("ping -c 1 google.com > /dev/null 2>&1");
-                    if(pingResult == 0){
-                        *_aidl_return =  "Connected";
+                    
+                    std::string path = "/sys/class/net/wlan0/operstate";
+                    std::ifstream operstateFile(path);
+
+                    if (!operstateFile.is_open()) {
+                         ALOGD("***-Failed to open file /sys/class/net/wlan0/operstate-***");
+
                     }
-                    else{
-                         *_aidl_return =  "Disconnected";
+
+                    std::string operstate;
+                    operstateFile >> operstate;
+                    operstateFile.close();
+
+                    if (operstate == "up") {
+                         *_aidl_return = "Connected";
+                    } else if (operstate == "down") {
+                         *_aidl_return = "Disconnected";
+                    } else {
+                         *_aidl_return = "Error";
                     }
-                   
+                                
                     return ndk::ScopedAStatus::ok();
                 }
                 double Carsenze::calculateCpuUsage() {

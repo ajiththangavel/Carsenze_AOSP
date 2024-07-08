@@ -7,42 +7,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="16dp"
     tools:context=".MainActivity">
-
-	<TextView
+<TextView
         android:id="@+id/memory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mem : 1GB "
-        android:layout_marginBottom="8dp"/>
+        android:hint="Memory: 1GB"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal" />
 
-	<LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/cpu"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:hint="CPU: 30%"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal" />
 
-		<TextView
-            android:id="@+id/cpu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CPU : 30 %"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"/>
+    <TextView
+        android:id="@+id/network"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Network: 10 Mbps"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal" />
 
-		<TextView
-            android:id="@+id/network"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Network : 10mbps"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"/>
-	</LinearLayout>
-
-	<Button
+    <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Refresh"
+        android:padding="12dp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"/>
-
+        android:layout_marginTop="24dp" />
 </LinearLayout>
+
