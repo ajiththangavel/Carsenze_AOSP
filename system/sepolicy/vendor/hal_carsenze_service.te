@@ -9,6 +9,12 @@ allow servicemanager hal_carsenze_service:file { open read };
 allow servicemanager hal_carsenze_service:process getattr;
 allow hal_carsenze_service servicemanager:binder { call transfer};
 allow hal_carsenze_service system_server:binder call;
+allow hal_carsenze_service proc_stat:file open;
+allow hal_carsenze_service proc_stat:file read;
+allow hal_carsenze_service sysfs_net:dir search;
+allow hal_carsenze_service sysfs_net:file read;
+allow hal_carsenze_service sysfs_net:file open;
+
 allow hal_carsenze_service default_android_service:service_manager add;
 allow untrusted_app default_android_service:service_manager find;
 allow untrusted_app hal_carsenze_service:binder call;
