@@ -8,6 +8,9 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <thread>
+#include <chrono>
+#include <future>
 #include "Carsenze.h"
 
 namespace aidl {
@@ -62,7 +65,38 @@ namespace aidl {
                     operstateFile.close();
 
                     if (operstate == "up") {
-                         *_aidl_return = "Connected";
+                    const std::string interface = "wlan0"; // Change this to your network interface
+
+                    // Launch a background thread to gather network statistics
+                    auto future = std::async(std::launch::async, [this, interface]() {
+                        auto stats1 = getNetworkStats();
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        auto stats2 = getNetworkStats();
+
+                        std::ostringstream oss;
+
+                        for (const auto& stat1 : stats1) {
+                            for (const auto& stat2 : stats2) {
+                                if (stat1.interfaceName == stat2.interfaceName && stat1.interfaceName == interface) {
+                                    unsigned long long rxBytesPerSec = stat2.rxBytes - stat1.rxBytes;
+                                    unsigned long long txBytesPerSec = stat2.txBytes - stat1.txBytes;
+
+                                    double rxKbps = (rxBytesPerSec * 8.0) / 1024.0;
+                                    double txKbps = (txBytesPerSec * 8.0) / 1024.0;
+
+                                    oss << "Interface: " << stat1.interfaceName << "\n"
+                                        << "   RX: " << rxKbps << " Kbps\n"
+                                        << "   TX: " << txKbps << " Kbps\n";
+                                }
+                            }
+                        }
+
+                        return oss.str();
+                    });
+
+                    // Wait for the future to complete and get the result
+                    *_aidl_return = "Connected" + future.get();
+                    
                     } else if (operstate == "down") {
                          *_aidl_return = "Disconnected";
                     } else {
@@ -114,6 +148,34 @@ namespace aidl {
 
                     return (double)(totalDiff - idleDiff) / totalDiff * 100.0;
                 }
+                std::vector<NetworkStats> Carsenze::getNetworkStats() {
+                    std::vector<NetworkStats> stats;
+                    std::ifstream file("/proc/net/dev");
+
+                    if (!file.is_open()) {
+                        ALOGE("**-Error opening /proc/net/dev-**");
+                        return stats;
+                    }
+
+                    std::string line;
+                    std::getline(file, line); // Skip the first header line
+                    std::getline(file, line); // Skip the second header line
+
+                    while (std::getline(file, line)) {
+                        std::istringstream iss(line);
+                        NetworkStats stat;
+                        std::string dummy;
+                        iss >> stat.interfaceName >> stat.rxBytes >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> dummy >> stat.txBytes;
+                        if (stat.interfaceName.back() == ':') {
+                            stat.interfaceName.pop_back(); // Remove the trailing ':'
+                        }
+                        stats.push_back(stat);
+                    }
+
+                    file.close();
+                    return stats;
+                }
+
             }  // namespace carsenze
         }  // namespace hardwares
     }  // namespace android
