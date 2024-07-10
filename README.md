@@ -53,3 +53,9 @@ we can know the missing sepolicies by running this commands.
 allow hal_carsenze_service sysfs_net:dir search;
 allow hal_carsenze_service sysfs_net:file read;
 allow hal_carsenze_service sysfs_net:file open;
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-->Added the following sepolicies into system/sepolicy/vendor/hal_carsenze_service.te  to open /proc/net/dev files
+
+allow hal_carsenze_service proc_net:file read;
+allow hal_carsenze_service proc_net:file open;

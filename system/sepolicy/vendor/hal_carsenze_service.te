@@ -14,6 +14,8 @@ allow hal_carsenze_service proc_stat:file read;
 allow hal_carsenze_service sysfs_net:dir search;
 allow hal_carsenze_service sysfs_net:file read;
 allow hal_carsenze_service sysfs_net:file open;
+allow hal_carsenze_service proc_net:file read;
+allow hal_carsenze_service proc_net:file open;
 
 allow hal_carsenze_service default_android_service:service_manager add;
 allow untrusted_app default_android_service:service_manager find;
