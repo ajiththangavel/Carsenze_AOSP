@@ -3,6 +3,7 @@ package com.carsenze;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
@@ -16,6 +17,24 @@ public class Carsenze extends Activity {
     private static final String TAG = "Carsenze_System_APP";
     private static final String ICARSENZE_AIDL_INTERFACE = "android.hardware.carsenze.ICarsenze/default";
     private static ICarsenze carsenzeAJ; // AIDL Java
+    
+    private Handler handler = new Handler();
+    private Runnable updateRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            Log.d(TAG,"**-Requesting for Network Information-**");
+            try{
+            String networkStats = carsenzeAJ.getNetworkStats();
+            TextView networkTextView = findViewById(R.id.network);
+            networkTextView.setText("Network: " + networkStats);
+            } catch (RemoteException e) {
+            Log.e(TAG, "Error retrieving stats from ICarsenze AIDL service", e);
+            }
+            
+            handler.postDelayed(this, 5000); // Schedule next update in 5 seconds
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +63,8 @@ public class Carsenze extends Activity {
         }
         // Update stats initially
         updateStats();
+        // Start periodic updates
+        handler.post(updateRunnable);
     }
 
     private void updateStats() {
@@ -58,10 +79,10 @@ public class Carsenze extends Activity {
 
             // Update TextViews with retrieved stats
             TextView cpuTextView = findViewById(R.id.cpu);
-            cpuTextView.setText("CPU: " + cpuStats);
+            cpuTextView.setText(cpuStats);
 
             TextView memoryTextView = findViewById(R.id.memory);
-            memoryTextView.setText("Memory: " + memoryStats);
+            memoryTextView.setText("Memory: \n" + memoryStats);
 
             TextView networkTextView = findViewById(R.id.network);
             networkTextView.setText("Network: " + networkStats);
@@ -71,3 +92,4 @@ public class Carsenze extends Activity {
         }
     }
 }
+
