@@ -59,3 +59,17 @@ allow hal_carsenze_service sysfs_net:file open;
 
 allow hal_carsenze_service proc_net:file read;
 allow hal_carsenze_service proc_net:file open;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+commands:
+1)ip -br link show 
+-->to check network interfaces up/down
+2)ping google.com
+-->to check internet connectivity
+3)top
+-->to check the Memory and Cpu status.
+2)
+
+
+
