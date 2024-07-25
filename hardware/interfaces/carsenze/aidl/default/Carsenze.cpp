@@ -95,7 +95,7 @@ namespace aidl {
                     });
 
                     // Wait for the future to complete and get the result
-                    *_aidl_return = "Connected" + future.get();
+                    *_aidl_return = "Connected\n" + future.get();
                     
                     } else if (operstate == "down") {
                          *_aidl_return = "Disconnected";
@@ -180,4 +180,3 @@ namespace aidl {
         }  // namespace hardwares
     }  // namespace android
 }  // namespace aidl
-
